@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const { User } = require("../../Models/User");
-const { hashString } = require("../../Modules/functions");
+const { hashString, tokenGenerator } = require("../../Modules/functions");
+const bcrypt = require('bcrypt');
 
 class AuthController {
     async register(req, res, next){
@@ -15,8 +16,22 @@ class AuthController {
             });
         }
     }
-    login(){
+    async login(req, res, next){
+        try {
+            const {username, password} = req.body;
+            const user = await User.findOne({username});
+            if(!user) throw {status: 422, message: "Invalid Username or Password", success: false};
+            if(!bcrypt.compareSync(password, user.password)) throw {status: 422, message: "Invalid Username or Password", success: false};
 
+            const token = tokenGenerator({username});
+            user.token = token;
+            user.save();
+
+            return res.json({status: 200, message: "Login was Successfuly", success: true, data: {token}});
+
+        } catch (error) {
+            next(error);
+        }
     }
     resetPassword(){
 
