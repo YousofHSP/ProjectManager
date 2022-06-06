@@ -11,7 +11,14 @@ function tokenGenerator(payload){
     return token;
 }
 
+function verifyJwtToken(token){
+    const result = jwt.verify(token, config.jwt.secretKey);
+    if(!result?.username) throw {stats: 401, message: "Unauthorized", success: false};
+    return result;
+}
+
 module.exports = {
     hashString,
-    tokenGenerator
+    tokenGenerator,
+    verifyJwtToken
 }
