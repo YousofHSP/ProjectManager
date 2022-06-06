@@ -1,11 +1,13 @@
+const { router } = require('../Router/Router');
+
 module.exports = class Application {
     #express = require('express');
     #app = this.#express();
     constructor(port, DBURL) {
         this.configApplication();
         this.createServer(port);
-        this.configDatabase(DBURL);
         this.createRoutes();
+        this.configDatabase(DBURL);
         this.errorHandler();
 
     }
@@ -54,5 +56,12 @@ module.exports = class Application {
                 message: "This is a new Express Application"
             });
         })
+        this.#app.use(router)
+        // this.#app.use((err, req, res, next) => {
+        //     try {
+        //     } catch (error) {
+        //         next(error);
+        //     }
+        // })
     }
 }
