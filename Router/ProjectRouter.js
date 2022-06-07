@@ -23,6 +23,18 @@ router.post('/',
     uploadFile,
     ProjectController.store
 );
+router.patch('/:id/uploadImage', 
+    checkLogin, 
+    fileupload(),
+    uploadFile,
+    ProjectController.uploadImage
+);
+router.patch('/:id', 
+    checkLogin, 
+    storeProjectValidateion(), 
+    expressValidatorMapper, 
+    ProjectController.update
+);
 router.delete('/:id', 
     checkLogin,
     ProjectController.destroy

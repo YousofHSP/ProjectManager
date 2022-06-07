@@ -32,7 +32,7 @@ class UserController{
                 return res.json({
                     status: 200,
                     success: true,
-                    message: "Profile Update Successfuly"
+                    message: "Profile Update successfully"
                 });
             }
             throw {status: 500, message: "Profile Update Failed", success: false};
@@ -53,7 +53,7 @@ class UserController{
 
             return res.json({
                 status: 200,
-                message: "Image Upload Successfuly",
+                message: "Image Upload successfully",
                 success: true,
             });
             

@@ -12,7 +12,7 @@ class AuthController {
             return res.status(201).json({
                 status: 201,
                 success: true,
-                message: "User Created Successfuly"
+                message: "User Created successfully"
             });
         }
     }
@@ -27,7 +27,7 @@ class AuthController {
             user.token = token;
             user.save();
 
-            return res.json({status: 200, message: "Login was Successfuly", success: true, data: {token}});
+            return res.json({status: 200, message: "Login was successfully", success: true, data: {token}});
 
         } catch (error) {
             next(error);
