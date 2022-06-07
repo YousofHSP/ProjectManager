@@ -10,6 +10,10 @@ router.get('/',
     checkLogin,
     ProjectController.index
 );
+router.get('/:id', 
+    checkLogin,
+    ProjectController.show
+);
 
 router.post('/', 
     checkLogin, 
@@ -18,6 +22,10 @@ router.post('/',
     expressValidatorMapper, 
     uploadFile,
     ProjectController.store
+);
+router.delete('/:id', 
+    checkLogin,
+    ProjectController.destroy
 );
 
 module.exports = {
