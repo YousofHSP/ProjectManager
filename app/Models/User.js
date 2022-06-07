@@ -8,9 +8,10 @@ const UserSchema = new mongoose.Schema({
     roles: {type: [String], default: ['USER']},
     email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
-    skils: {type: [String], default: []},
+    skills: {type: [String], default: []},
     teams: {type: [mongoose.Types.ObjectId], default: []},
-    token: {type: String, default: ""}
+    token: {type: String, default: ""},
+    image: {type: String, default: "/defaults/default.png"}
 }, {
     timestamps: true
 });
