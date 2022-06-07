@@ -5,9 +5,9 @@ class ProjectController{
     show(){}
     async store(req, res, next){
         try {
-            const {title, text, image} = req.body;
+            const {title, text, image, tags} = req.body;
             const owner = req.user._id;
-            const result = await Project.create({title, text, owner, image});
+            const result = await Project.create({title, text, owner, image, tags});
             if(!result) throw {status: 500, message: "Project Create Failed", success: false};
             
             return res.status(201).json({
