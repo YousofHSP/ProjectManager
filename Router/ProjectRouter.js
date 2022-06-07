@@ -6,7 +6,19 @@ const { uploadFile } = require('../app/Modules/express-fileupload');
 const fileupload = require('express-fileupload');
 const router = require('express').Router()
 
-router.post('/', checkLogin, fileupload(), storeProjectValidateion(), expressValidatorMapper, uploadFile,ProjectController.store)
+router.get('/', 
+    checkLogin,
+    ProjectController.index
+);
+
+router.post('/', 
+    checkLogin, 
+    fileupload(), 
+    storeProjectValidateion(), 
+    expressValidatorMapper, 
+    uploadFile,
+    ProjectController.store
+);
 
 module.exports = {
     ProjectRouter: router

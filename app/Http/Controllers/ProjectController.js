@@ -1,7 +1,19 @@
 const { Project } = require("../../Models/Project");
 
 class ProjectController{
-    index(){}
+    async index(req, res, next){
+        try {
+            const owner = req.user._id;
+            const projects = await Project.find({owner});
+            return res.json({
+                status: 200,
+                success: true,
+                data: projects
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
     show(){}
     async store(req, res, next){
         try {
