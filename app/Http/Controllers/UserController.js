@@ -1,7 +1,10 @@
+const { isValidObjectId } = require("mongoose");
+const { Team } = require("../../Models/Team");
 const { User } = require("../../Models/User");
 const { generateUrl } = require("../../Modules/functions");
+const Controller = require("./Controller");
 
-class UserController{
+class UserController extends Controller{
     getProfile(req, res, next){
         try {
             const user = req.user;
@@ -64,10 +67,73 @@ class UserController{
     }
     getSkills(){}
     updateSkills(){}
-    getTeams(){}
+    async indexTeams(req, res, next){
+        try {
+            const user = req.user._id;
+
+            const teams = await Team.find({$or: [{owner: user}, {users: user}]});
+            return res.json({
+                status: 200,
+                success: true,
+                data: teams
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+    async indexRequest(req, res, next){
+        try {
+            const {status} = req.query;
+            const userID = req.user._id;
+            let filter = 1;
+            if(['pending', 'accepted', 'rejected'].includes(status)){
+                filter = {
+                    $filter: {
+                        input: "$inviteRequests",
+                        as: "requests",
+                        cond: {
+                            $eq: ["$$requests.status", status]
+                        }
+                    }
+                };
+            }
+            const requests = await (User.aggregate([
+                {
+                    $match: {_id: userID}
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        inviteRequests: filter
+                    }
+                }
+            ]))
+            return res.json({requests: requests?.[0]?.inviteRequests || []});
+        } catch (error) {
+            next(error);
+        }
+    }
     getProjects(){}
-    acceptInviteInTeam(){}
-    rejectInvitInTeam(){}
+    async changeStatusInvite(req, res, next){
+        try {
+            const {id, status} = req.params;
+            const request = await User.findOne({"inviteRequests._id": id});
+            const findRequest = request.inviteRequests.find(item => item.id == id);
+            if(findRequest.status !== 'pending') throw {status: 400, message: "Request Already accepted or rejected"};
+            
+            const result = await User.updateOne({"inviteRequests._id": id}, {
+                $set: {"inviteRequests.$.status": status}
+            });
+            if(result.modifiedCount == 0) throw {status: 500, message: "Change Request Statut Failed", success: false};
+            return res.json({
+                success: true,
+                status: 200,
+                message: "Request Status Changed Successfully"
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = {

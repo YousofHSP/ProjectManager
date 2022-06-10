@@ -19,7 +19,7 @@ class AuthController {
     async login(req, res, next){
         try {
             const {username, password} = req.body;
-            const user = await User.findOne({username});
+            const user = await User.findOne({username: "YousofHSP"});
             if(!user) throw {status: 422, message: "Invalid Username or Password", success: false};
             if(!bcrypt.compareSync(password, user.password)) throw {status: 422, message: "Invalid Username or Password", success: false};
 

@@ -24,6 +24,10 @@ router.put('/profile-image',
     UserController.uploadProfileImage
 );
 
+router.get('/teams', checkLogin,UserController.indexTeams);
+router.get('/teams/requests', checkLogin, UserController.indexRequest);
+router.get('/teams/requests/:id/:status', checkLogin, UserController.changeStatusInvite);
+
 module.exports = {
     UserRouter: router
 }
