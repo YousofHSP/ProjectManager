@@ -2,18 +2,18 @@ const { isValidObjectId } = require("mongoose");
 const { Team } = require("../../Models/Team");
 const { User } = require("../../Models/User");
 const { generateUrl } = require("../../Modules/functions");
+const { UserRes } = require("../Resources/UserRes");
 const Controller = require("./Controller");
 
 class UserController extends Controller{
     getProfile(req, res, next){
         try {
             const user = req.user;
-            user.image = generateUrl(req, user.image);
             return res.json({
                 status: 200,
                 message: "ok",
                 success: true,
-                data: user
+                data: UserRes.handle(user)
             })
         } catch (error) {
             next(error);
@@ -71,7 +71,27 @@ class UserController extends Controller{
         try {
             const user = req.user._id;
 
-            const teams = await Team.find({$or: [{owner: user}, {users: user}]});
+            const teams = await Team.aggregate([
+                {
+                    $match: {
+                        $or: [{owner: user}, {users: user}]
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "owner",
+                        foreignField: "_id",
+                        as: "owner"
+                    }
+                },
+                {
+                    $project: {"owner.password": 0, "owner.token": 0, "owner.roles": 0, "owner.skills": 0, "owner.teams": 0, "owner.inviteRequests": 0}
+                },
+                {
+                    $unwind: "$owner"
+                }
+            ]);
             return res.json({
                 status: 200,
                 success: true,

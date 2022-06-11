@@ -31,7 +31,7 @@ function createUploadPath(){
 }
 
 function generateUrl(req, uri){
-    let url = req.protocol + "://" + req.get('host') + uri.replace(/[\\\\]/gm, "/");
+    let url = config.host + uri.replace(/[\\\\]/gm, "/");
     return url;
 }
 

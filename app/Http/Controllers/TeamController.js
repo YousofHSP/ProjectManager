@@ -1,17 +1,18 @@
 const { isValidObjectId } = require("mongoose");
 const { Team } = require("../../Models/Team");
 const { User } = require("../../Models/User");
+const { TeamRes } = require("../Resources/TeamRes");
 const Controller = require("./Controller");
 
 class TeamController extends Controller{
     async index(req, res, next){
         try {
             const owner = req.user._id;
-            const teams = await Team.find({owner});
+            const teams = await Team.find({owner}).populate(['owner', 'users']);
             return res.json({
                 status: 200,
                 success: true,
-                data: teams
+                data: TeamRes.collection(teams)
             });
         } catch (error) {
             next(error);
@@ -26,7 +27,7 @@ class TeamController extends Controller{
             return res.json({
                 status: 200,
                 success: true,
-                data: team
+                data: TeamRes.handle(team)
             });
         } catch (error) {
             next(error);
